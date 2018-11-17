@@ -19,6 +19,7 @@ package org.apache.geode.perftest.jvms.rmi;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.rmi.RemoteException;
 
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.jcajce.provider.drbg.DRBG;
@@ -85,6 +86,9 @@ public class ChildJVM {
         Thread.sleep(pingTime);
       }
 
+      system.exit(0);
+    } catch(RemoteException e) {
+      //main process exited;
       system.exit(0);
     } catch(Throwable t) {
       t.printStackTrace();

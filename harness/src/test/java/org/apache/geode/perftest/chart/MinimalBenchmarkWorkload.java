@@ -15,19 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.geode.perftest;
+package org.apache.geode.perftest.chart;
 
-import java.io.File;
+import java.io.Serializable;
+import java.util.Map;
 
-/**
- * Runner that executes a {@link PerformanceTest}A
- *
- * Runners can be obtained from the {@link TestRunners} static
- * factory methods. Eg
- */
-public interface TestRunner {
-  /**
-   * Execute a test.
-   */
-  void runTest(PerformanceTest test) throws Exception;
+import org.yardstickframework.BenchmarkDriverAdapter;
+
+class MinimalBenchmarkWorkload extends BenchmarkDriverAdapter implements Serializable {
+  @Override
+  public boolean test(Map<Object, Object> ctx) throws Exception {
+    Thread.sleep(1);
+    return true;
+  }
 }

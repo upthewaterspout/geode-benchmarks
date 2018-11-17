@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.geode.perftest.PerformanceTest;
 import org.apache.geode.perftest.TestConfig;
 import org.apache.geode.perftest.TestRunner;
+import org.apache.geode.perftest.chart.YardstickChart;
 import org.apache.geode.perftest.infrastructure.InfrastructureFactory;
 import org.apache.geode.perftest.infrastructure.Infrastructure;
 import org.apache.geode.perftest.jvms.RemoteJVMFactory;
@@ -88,8 +89,15 @@ public class DefaultTestRunner implements TestRunner {
       runTasks(config.getAfter(), remoteJVMs);
 
       logger.info("Copying results...");
+
+      benchmarkOutput.mkdirs();
       remoteJVMs.copyResults(benchmarkOutput);
 
+      //Tell yardstick chart tools there are multiple driver files.
+      new File(benchmarkOutput, ".multiple-drivers").createNewFile();
+
+      logger.info("Creating charts...");
+      new YardstickChart().addInputFolder(outputDir).generate();
     }
   }
 

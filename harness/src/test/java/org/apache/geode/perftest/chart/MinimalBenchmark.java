@@ -15,19 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.geode.perftest;
+package org.apache.geode.perftest.chart;
 
-import java.io.File;
+import org.apache.geode.perftest.PerformanceTest;
+import org.apache.geode.perftest.TestConfig;
 
-/**
- * Runner that executes a {@link PerformanceTest}A
- *
- * Runners can be obtained from the {@link TestRunners} static
- * factory methods. Eg
- */
-public interface TestRunner {
-  /**
-   * Execute a test.
-   */
-  void runTest(PerformanceTest test) throws Exception;
+class MinimalBenchmark implements PerformanceTest {
+  @Override
+  public void configure(TestConfig config) {
+    config.name(MinimalBenchmark.class.getCanonicalName());
+    config.role("test", 2);
+    config.durationSeconds(5);
+    config.threads(2);
+    config.workload(new MinimalBenchmarkWorkload(), "test");
+  }
 }
