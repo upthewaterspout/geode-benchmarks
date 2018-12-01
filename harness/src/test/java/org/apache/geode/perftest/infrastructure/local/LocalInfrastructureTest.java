@@ -62,7 +62,7 @@ public class LocalInfrastructureTest {
     File someFile = temporaryFolder.toFile();
     File expectedDir = new File(nodedir, "lib");
     assertFalse(expectedDir.exists());
-    infra.copyToNodes(Arrays.asList(someFile), node -> "lib", true);
+    infra.copyToNodes(Arrays.asList(someFile), node -> "lib", true, infra.getNodes());
     assertTrue(expectedDir.exists());
     assertTrue(new File(expectedDir, someFile.getName()).exists());
 

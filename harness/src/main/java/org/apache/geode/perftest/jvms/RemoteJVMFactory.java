@@ -49,8 +49,6 @@ public class RemoteJVMFactory {
   public static final String OUTPUT_DIR = "OUTPUT_DIR";
   public static final String JVM_ID = "JVM_ID";
   public static final int RMI_PORT = 33333;
-  public static final String CLASSPATH = System.getProperty("java.class.path");
-  public static final String JAVA_HOME = System.getProperty("java.home");
   private final JVMLauncher jvmLauncher;
   private final ClassPathCopier classPathCopier;
   private final ControllerFactory controllerFactory;
@@ -67,7 +65,7 @@ public class RemoteJVMFactory {
   }
 
   public RemoteJVMFactory(InfrastructureFactory infrastructureFactory) {
-    this(infrastructureFactory, new JVMLauncher(), new ClassPathCopier(CLASSPATH, JAVA_HOME),
+    this(infrastructureFactory, new JVMLauncher(), new ClassPathCopier(),
         new ControllerFactory());
   }
 
@@ -97,7 +95,7 @@ public class RemoteJVMFactory {
     Controller controller =
         controllerFactory.createController(new SharedContext(mapping), numWorkers);
 
-    classPathCopier.copyToNodes(infra, node -> getLibDir(mapping, node));
+    classPathCopier.copyToNodes(infra, node -> getLibDir(mapping, node), infra.getNodes());
 
     CompletableFuture<Void> processesExited = jvmLauncher.launchProcesses(infra, RMI_PORT, mapping);
 

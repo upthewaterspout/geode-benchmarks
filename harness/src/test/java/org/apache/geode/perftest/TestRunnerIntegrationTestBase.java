@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Predicate;
@@ -33,32 +32,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junitpioneer.jupiter.TempDirectory;
 
 import org.apache.geode.perftest.benchmarks.EmptyBenchmark;
-import org.apache.geode.perftest.infrastructure.local.LocalInfrastructureFactory;
-import org.apache.geode.perftest.jvms.RemoteJVMFactory;
-import org.apache.geode.perftest.runner.DefaultTestRunner;
 import org.apache.geode.perftest.yardstick.analysis.YardstickThroughputSensorParser;
 
 @ExtendWith(TempDirectory.class)
-public class TestRunnerIntegrationTest {
+public abstract class TestRunnerIntegrationTestBase {
 
   Path temporaryFolder;
+  private TestRunner runner;
+  private File outputDir;
+
+  protected abstract TestRunner createRunner(File outputDir);
 
   @BeforeEach
   void setup(@TempDirectory.TempDir Path tempDirPath) {
     this.temporaryFolder = tempDirPath;
     outputDir = temporaryFolder.toFile();
-    runner = new DefaultTestRunner(new RemoteJVMFactory(new LocalInfrastructureFactory()),
-        outputDir);
+    runner = createRunner(outputDir);
   }
 
-  private TestRunner runner;
-  private File outputDir;
-  public static final String SAMPLE_BENCHMARK = "SampleBenchmark";
-
-  @BeforeEach
-  public void setup() throws IOException {
-
-  }
 
   @Test
   public void runsBeforeWorkload() throws Exception {

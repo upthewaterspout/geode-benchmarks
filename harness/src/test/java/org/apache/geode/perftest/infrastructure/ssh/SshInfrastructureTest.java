@@ -23,17 +23,12 @@ import static org.junitpioneer.jupiter.TempDirectory.TempDir;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.sshd.server.SshServer;
-import org.apache.sshd.server.command.Command;
-import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.shell.ProcessShellCommandFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,46 +43,23 @@ public class SshInfrastructureTest {
 
   private static final Set<String> HOSTS = Collections.singleton("localhost");
   private static final String USER = System.getProperty("user.name");
+  public TestSshServer sshServer;
   Path temporaryFolder;
-  public SshServer server;
 
   @BeforeEach
   void createTempFolder(@TempDir Path tempDir, @TempDir Path serverPath) throws IOException {
     temporaryFolder = tempDir;
-    server = createServer(serverPath);
-  }
-
-  private SshServer createServer(Path serverPath) throws IOException {
-    SshServer sshd = SshServer.setUpDefaultServer();
-    sshd.setPort(0);
-    sshd.setHost("localhost");
-    sshd.setPublickeyAuthenticator((username, key, session) -> true);
-    sshd.setKeyPairProvider(
-        new SimpleGeneratorHostKeyProvider(serverPath.resolve("hostkey.ser")));
-    sshd.setCommandFactory(new SshInfrastructureTest.UnescapingCommandFactory());
-    sshd.start();
-    return sshd;
+    sshServer = new TestSshServer(serverPath);
   }
 
   @AfterEach
   void stopServer() {
-    try {
-      server.stop();
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
-
-  private class UnescapingCommandFactory extends ProcessShellCommandFactory {
-    @Override
-    public Command createCommand(String command) {
-      return super.createCommand(command.replace("'", ""));
-    }
+    sshServer.stop();
   }
 
   @Test
   public void canFindNodes() throws IOException {
-    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, server.getPort());
+    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, sshServer.getPort());
 
     assertEquals(1, infra.getNodes().size());
   }
@@ -95,7 +67,7 @@ public class SshInfrastructureTest {
   @Test
   public void canExecuteACommandOnNode()
       throws IOException {
-    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, server.getPort());
+    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, sshServer.getPort());
     Infrastructure.Node node1 = infra.getNodes().iterator().next();
 
     File folder = temporaryFolder.toFile();
@@ -108,14 +80,16 @@ public class SshInfrastructureTest {
 
   @Test
   public void copyToNodesPutsFileOnNode() throws IOException, InterruptedException {
-    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, server.getPort());
+    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, sshServer.getPort());
 
     File someFile = temporaryFolder.resolve("someFile.tmp").toFile();
     assertTrue(someFile.createNewFile());
     File targetFolder = temporaryFolder.resolve("dest").toFile();
 
     assertFalse(targetFolder.exists());
-    infra.copyToNodes(Collections.singletonList(someFile), node -> targetFolder.getPath(), false);
+
+    infra.copyToNodes(Collections.singletonList(someFile), node -> targetFolder.getPath(), false,
+        infra.getNodes());
 
     assertTrue(targetFolder.exists());
     assertTrue(new File(targetFolder, someFile.getName()).exists());
@@ -123,7 +97,7 @@ public class SshInfrastructureTest {
 
   @Test
   public void copyToNodesCleansDirectory() throws IOException, InterruptedException {
-    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, server.getPort());
+    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, sshServer.getPort());
 
     File someFile = temporaryFolder.resolve("someFile.tmp").toFile();
     assertTrue(someFile.createNewFile());
@@ -133,7 +107,8 @@ public class SshInfrastructureTest {
     assertTrue(fileToRemove.createNewFile());
     assertTrue(fileToRemove.exists());
 
-    infra.copyToNodes(Arrays.asList(someFile), node -> targetFolder.getPath(), true);
+    infra.copyToNodes(Arrays.asList(someFile), node -> targetFolder.getPath(), true,
+        infra.getNodes());
 
     assertTrue(targetFolder.exists());
     assertTrue(new File(targetFolder, someFile.getName()).exists());
@@ -144,7 +119,7 @@ public class SshInfrastructureTest {
   @Test
   public void canCopyFilesFromANode()
       throws IOException, ExecutionException, InterruptedException {
-    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, server.getPort());
+    SshInfrastructure infra = new SshInfrastructure(HOSTS, USER, sshServer.getPort());
     Infrastructure.Node node1 = infra.getNodes().iterator().next();
 
     infra.onNode(node1, new String[] {"mkdir", "-p", "/tmp/foo"});

@@ -161,7 +161,7 @@ public class TestConfig implements Serializable {
     return Collections.unmodifiableMap(jvmArgs);
   }
 
-  public static class TestStep {
+  public static class TestStep implements Serializable {
     private final Task task;
     private final String[] roles;
 

@@ -1,0 +1,76 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.geode.perftest.runner.remote;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
+import org.apache.commons.io.FileUtils;
+
+import org.apache.geode.perftest.TestConfig;
+import org.apache.geode.perftest.TestRunners;
+import org.apache.geode.perftest.infrastructure.ssh.SshInfrastructureFactory;
+import org.apache.geode.perftest.jdk.SystemInterface;
+import org.apache.geode.perftest.jvms.RemoteJVMFactory;
+import org.apache.geode.perftest.runner.DefaultTestRunner;
+
+public class RemoteRunnerJVM {
+
+
+  public static final String OUTPUT_DIR = "output/remote-runner";
+  public static final String CONFIG_FILE = "CONFIG_FILE";
+  public static final String HOSTS = TestRunners.TEST_HOSTS;
+  public static final String USER = "USER";
+  public static final String SSH_PORT = "SSH_PORT";
+  public static final String TEST_NAME = "TEST_NAME";
+
+  static final String LIB_DIR = ".geode-performance/remote-runner";
+
+  private SystemInterface system;
+
+  public RemoteRunnerJVM(SystemInterface system) {
+
+    this.system = system;
+  }
+
+  public static void main(String[] args) throws Exception {
+    new RemoteRunnerJVM(new SystemInterface()).run();
+  }
+
+  private void run() throws Exception {
+    String configFile = system.getProperty(CONFIG_FILE);
+    String users = system.getProperty(USER);
+    String[] hosts = system.getProperty(HOSTS).split(",");
+    int sshPort = system.getInteger(SSH_PORT);
+    String testName = system.getProperty(TEST_NAME);
+    File outputDir = new File(OUTPUT_DIR);
+    FileUtils.deleteQuietly(outputDir);
+    TestConfig config = readFile(configFile);
+    new DefaultTestRunner(new RemoteJVMFactory(new SshInfrastructureFactory(users, sshPort, hosts)),
+        outputDir)
+            .runTest(config, testName);
+  }
+
+  private TestConfig readFile(String configFile) throws IOException, ClassNotFoundException {
+    try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(configFile))) {
+      return (TestConfig) input.readObject();
+    }
+  }
+}

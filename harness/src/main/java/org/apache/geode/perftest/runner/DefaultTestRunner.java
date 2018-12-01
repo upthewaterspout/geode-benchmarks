@@ -58,7 +58,7 @@ public class DefaultTestRunner implements TestRunner {
     runTest(config, testName);
   }
 
-  protected void runTest(TestConfig config, String testName)
+  public void runTest(TestConfig config, String testName)
       throws Exception {
     int nodes = config.getTotalJVMs();
     File benchmarkOutput = new File(outputDir, testName);

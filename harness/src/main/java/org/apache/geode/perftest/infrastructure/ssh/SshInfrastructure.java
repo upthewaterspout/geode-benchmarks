@@ -109,11 +109,10 @@ public class SshInfrastructure implements Infrastructure {
 
   @Override
   public void copyToNodes(Iterable<File> files, Function<Node, String> destDirFunction,
-      boolean removeExisting)
-      throws IOException {
+      boolean removeExisting, Set<Node> nodes) {
 
     List<CompletableFuture<Void>> futures = new ArrayList<>();
-    for (Node node : this.getNodes()) {
+    for (Node node : nodes) {
       futures.add(CompletableFuture.runAsync(() -> {
         InetAddress address = node.getAddress();
         String destDir = destDirFunction.apply(node);

@@ -20,9 +20,9 @@ package org.apache.geode.perftest;
 import java.io.File;
 
 import org.apache.geode.perftest.infrastructure.local.LocalInfrastructureFactory;
-import org.apache.geode.perftest.infrastructure.ssh.SshInfrastructureFactory;
 import org.apache.geode.perftest.jvms.RemoteJVMFactory;
 import org.apache.geode.perftest.runner.DefaultTestRunner;
+import org.apache.geode.perftest.runner.remote.RemoteTestRunner;
 
 /**
  * Static factory methods for implementations of {@link TestRunner}
@@ -40,12 +40,12 @@ public class TestRunners {
 
   public static final String TEST_HOSTS = "TEST_HOSTS";
   public static final String OUTPUT_DIR = "OUTPUT_DIR";
+  private static final String CONTROLLER_HOST = "CONTROLLER_HOST";
 
 
-  public static TestRunner defaultRunner(String username, File outputDir, String... hosts) {
-    return new DefaultTestRunner(
-        new RemoteJVMFactory(new SshInfrastructureFactory(username, hosts)),
-        outputDir);
+  public static TestRunner defaultRunner(String username, File outputDir, String controllerHost,
+      String... hosts) {
+    return new RemoteTestRunner(outputDir, username, 22, controllerHost, hosts);
   }
 
   /**
@@ -55,19 +55,24 @@ public class TestRunners {
    */
   public static TestRunner defaultRunner() {
     String testHosts = System.getProperty(TEST_HOSTS);
+    String controllerHost = System.getProperty(CONTROLLER_HOST);
     String outputDir = System.getProperty(OUTPUT_DIR, "output");
 
-    return defaultRunner(testHosts, new File(outputDir));
+    return defaultRunner(controllerHost, testHosts, new File(outputDir));
   }
 
-  static TestRunner defaultRunner(String testHosts, File outputDir) {
+  static TestRunner defaultRunner(String controllerHost, String testHosts, File outputDir) {
     if (testHosts == null) {
       throw new IllegalStateException(
           "You must set the TEST_HOSTS system property to a comma separated list of hosts to run the benchmarks on.");
     }
 
     String userName = System.getProperty("user.name");
-    return defaultRunner(userName, outputDir, testHosts.split(",\\s*"));
+    String[] hosts = testHosts.split(",\\s*");
+    if (controllerHost == null) {
+      controllerHost = hosts[0];
+    }
+    return defaultRunner(userName, outputDir, controllerHost, hosts);
   }
 
   /**

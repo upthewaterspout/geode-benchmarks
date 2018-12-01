@@ -52,7 +52,7 @@ public interface Infrastructure extends AutoCloseable {
    *        machine
    */
   void copyToNodes(Iterable<File> files, Function<Node, String> destDirectoryFunction,
-      boolean removeExisting) throws IOException;
+      boolean removeExisting, Set<Node> nodes) throws IOException;
 
   void copyFromNode(Node node, String directory, File destDir) throws IOException;
 

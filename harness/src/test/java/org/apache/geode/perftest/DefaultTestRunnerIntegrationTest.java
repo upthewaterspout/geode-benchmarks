@@ -17,28 +17,18 @@
 
 package org.apache.geode.perftest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.io.File;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.apache.geode.perftest.infrastructure.local.LocalInfrastructureFactory;
+import org.apache.geode.perftest.jvms.RemoteJVMFactory;
+import org.apache.geode.perftest.runner.DefaultTestRunner;
 
-import org.apache.geode.perftest.runner.remote.RemoteTestRunner;
+public class DefaultTestRunnerIntegrationTest extends TestRunnerIntegrationTestBase {
 
-public class TestRunnersTest {
-
-  @Test
-  public void defaultRunnerShouldParseHosts() {
-    RemoteTestRunner runner =
-        (RemoteTestRunner) TestRunners.defaultRunner(null, "localhost,localhost", null);
-
-    Assertions.assertThat(runner.getHosts()).containsExactly("localhost", "localhost");
-    assertEquals("localhost", runner.getControllerHost());
+  @Override
+  protected TestRunner createRunner(File outputDir) {
+    return new DefaultTestRunner(new RemoteJVMFactory(new LocalInfrastructureFactory()),
+        outputDir);
   }
 
-  @Test
-  public void defaultRunnerShouldFailWithNoHosts() {
-
-    assertThrows(IllegalStateException.class, () -> TestRunners.defaultRunner(null, null, null));
-  }
 }

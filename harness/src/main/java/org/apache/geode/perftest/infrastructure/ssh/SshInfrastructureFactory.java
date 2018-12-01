@@ -28,8 +28,15 @@ public class SshInfrastructureFactory implements InfrastructureFactory {
 
   private final List<String> hosts;
   private final String user;
+  private final int sshPort;
 
   public SshInfrastructureFactory(String user, String... hosts) {
+    this(user, 22, hosts);
+  }
+
+  public SshInfrastructureFactory(String user, int sshPort,
+      String... hosts) {
+    this.sshPort = sshPort;
     this.hosts = Arrays.asList(hosts);
     this.user = user;
   }
@@ -40,7 +47,7 @@ public class SshInfrastructureFactory implements InfrastructureFactory {
       throw new IllegalStateException(
           "Not enough hosts to create " + nodes + " nodes. Available hosts: " + hosts);
     }
-    return new SshInfrastructure(hosts.subList(0, nodes), user);
+    return new SshInfrastructure(hosts.subList(0, nodes), user, sshPort);
   }
 
   public Collection<String> getHosts() {
