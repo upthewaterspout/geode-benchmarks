@@ -30,6 +30,6 @@ public class CreatePartitionedProxyRegion implements Task {
   @Override
   public void run(TestContext context) throws Exception {
     Cache cache = (Cache) context.getAttribute("SERVER_CACHE");
-    cache.createRegionFactory(RegionShortcut.PARTITION_PROXY_REDUNDANT).create("region");
+    cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).create("region");
   }
 }
