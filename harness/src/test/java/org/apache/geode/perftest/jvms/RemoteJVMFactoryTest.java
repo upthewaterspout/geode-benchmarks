@@ -74,7 +74,7 @@ public class RemoteJVMFactoryTest {
 
     when(controller.waitForWorkers(anyInt(), any())).thenReturn(true);
 
-    factory.launch(roles, Collections.emptyMap());
+    factory.launch(roles, Collections.emptyMap(), Collections.emptyMap());
 
     InOrder inOrder = inOrder(controller, controllerFactory, jvmLauncher, classPathCopier, infra);
 

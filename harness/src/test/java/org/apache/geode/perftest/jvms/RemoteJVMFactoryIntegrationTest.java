@@ -46,7 +46,8 @@ public class RemoteJVMFactoryIntegrationTest {
   public void canExecuteCodeOnWorker() throws Exception {
     RemoteJVMFactory remoteJvmFactory = new RemoteJVMFactory(new LocalInfrastructureFactory());
     Map<String, Integer> roles = Collections.singletonMap("worker", 1);
-    try (RemoteJVMs jvms = remoteJvmFactory.launch(roles, Collections.emptyMap())) {
+    try (RemoteJVMs jvms = remoteJvmFactory.launch(roles, Collections.emptyMap(),
+        Collections.emptyMap())) {
       File tempFile = temporaryFolder.resolve("tmpfile").toFile();
       jvms.execute(context -> {
         tempFile.createNewFile();

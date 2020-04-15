@@ -16,6 +16,8 @@ package org.apache.geode.benchmark.tests;
 
 import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.CLIENT;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 import org.apache.geode.benchmark.tasks.ExecuteFunction;
@@ -30,8 +32,8 @@ public class PartitionedFunctionExecutionBenchmark extends AbstractPartitionedFu
   }
 
   @Override
-  public TestConfig configure() {
-    TestConfig config = super.configure();
+  public TestConfig configure(Map<String, String> testProperties) {
+    TestConfig config = super.configure(testProperties);
     config.workload(new ExecuteFunction(), CLIENT);
     return config;
   }

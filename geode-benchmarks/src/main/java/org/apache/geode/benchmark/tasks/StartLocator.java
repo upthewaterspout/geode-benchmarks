@@ -40,7 +40,7 @@ public class StartLocator implements Task {
 
   @Override
   public void run(TestContext context) throws Exception {
-    Properties properties = locatorProperties();
+    Properties properties = locatorProperties(context);
 
     String statsFile = new File(context.getOutputDir(), "stats.gfs").getAbsolutePath();
     properties.setProperty(ConfigurationProperties.STATISTIC_ARCHIVE_FILE, statsFile);

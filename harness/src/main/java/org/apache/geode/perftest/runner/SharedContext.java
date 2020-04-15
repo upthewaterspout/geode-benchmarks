@@ -20,6 +20,7 @@ package org.apache.geode.perftest.runner;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,9 +34,10 @@ import org.apache.geode.perftest.jvms.JVMMapping;
 public class SharedContext implements Serializable {
 
   private List<JVMMapping> jvmMappings;
+  private Map<String, String> testProperties;
 
-  public SharedContext(List<JVMMapping> jvmMappings) {
-
+  public SharedContext(List<JVMMapping> jvmMappings, Map<String, String> testProperties) {
+    this.testProperties = testProperties;
     this.jvmMappings = jvmMappings;
   }
 
@@ -51,5 +53,9 @@ public class SharedContext implements Serializable {
         .filter(mapping -> mapping.getRole().equals(role))
         .map(mapping -> mapping.getId())
         .collect(Collectors.toSet());
+  }
+
+  public Map<String, String> getTestProperties() {
+    return testProperties;
   }
 }

@@ -18,68 +18,21 @@ package org.apache.geode.benchmark.topology;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Properties;
+import java.util.Collections;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.apache.geode.perftest.TestConfig;
 
 public class ClientServerTopologyTest {
 
-  private Properties systemProperties;
-
-  @BeforeEach
-  public void beforeEach() {
-    systemProperties = (Properties) System.getProperties().clone();
-  }
-
-  @AfterEach
-  public void afterEach() {
-    System.setProperties(systemProperties);
-  }
-
   @Test
-  public void configWithSsl() {
-    System.setProperty("withSsl", "true");
-    TestConfig testConfig = new TestConfig();
+  public void addsClientServerAndLocatorRoles() {
+    TestConfig testConfig = new TestConfig(Collections.emptyMap());
     ClientServerTopology.configure(testConfig);
-    assertThat(testConfig.getJvmArgs().get("client")).contains("-DwithSsl=true");
-  }
-
-  @Test
-  public void configWithNoSsl() {
-    TestConfig testConfig = new TestConfig();
-    ClientServerTopology.configure(testConfig);
-    assertThat(testConfig.getJvmArgs().get("client")).doesNotContain("-DwithSsl=true");
-  }
-
-  @Test
-  public void configWithoutSecurityManager() {
-    TestConfig testConfig = new TestConfig();
-    ClientServerTopology.configure(testConfig);
-    assertThat(testConfig.getJvmArgs().get("client")).doesNotContain("-DwithSecurityManager=true");
-  }
-
-  @Test
-  public void configWithSecurityManager() {
-    System.setProperty("withSecurityManager", "true");
-    TestConfig testConfig = new TestConfig();
-    ClientServerTopology.configure(testConfig);
-    assertThat(testConfig.getJvmArgs().get("client")).contains("-DwithSecurityManager=true");
-  }
-
-  @Test
-  public void configWithSecurityManagerAndSslAndJava11() {
-    System.setProperty("withSecurityManager", "true");
-    System.setProperty("java.runtime.version", "11.0.4+11");
-    System.setProperty("withSsl", "true");
-    TestConfig testConfig = new TestConfig();
-
-    ClientServerTopology.configure(testConfig);
-
-    assertThat(testConfig.getJvmArgs().get("client")).contains("-DwithSecurityManager=true");
-    assertThat(testConfig.getJvmArgs().get("client")).contains("-DwithSsl=true");
+    assertThat(testConfig.getRoles())
+        .containsOnlyKeys(ClientServerTopology.Roles.CLIENT,
+            ClientServerTopology.Roles.LOCATOR,
+            ClientServerTopology.Roles.SERVER);
   }
 }

@@ -20,6 +20,7 @@ import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.LOC
 import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.SERVER;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
 import java.util.Properties;
 
 import org.junit.jupiter.api.AfterEach;
@@ -47,7 +48,7 @@ class GcLoggingParametersTest {
   @Test
   public void withJava8() {
     System.setProperty(JAVA_RUNTIME_VERSION, "1.8.0_212-b03");
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.emptyMap());
     GcLoggingParameters.configure(testConfig);
     assertThatJava8GcLog(testConfig);
   }
@@ -55,7 +56,7 @@ class GcLoggingParametersTest {
   @Test
   public void withJava11() {
     System.setProperty(JAVA_RUNTIME_VERSION, "11.0.4+11");
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.emptyMap());
     GcLoggingParameters.configure(testConfig);
     assertThatJava9GcLog(testConfig);
   }
@@ -63,7 +64,7 @@ class GcLoggingParametersTest {
   @Test
   public void withJava12() {
     System.setProperty(JAVA_RUNTIME_VERSION, "12.0.2+10");
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.emptyMap());
     GcLoggingParameters.configure(testConfig);
     assertThatJava9GcLog(testConfig);
   }
@@ -71,7 +72,7 @@ class GcLoggingParametersTest {
   @Test
   public void withJava13() {
     System.setProperty(JAVA_RUNTIME_VERSION, "13+33");
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.emptyMap());
     GcLoggingParameters.configure(testConfig);
     assertThatJava9GcLog(testConfig);
   }

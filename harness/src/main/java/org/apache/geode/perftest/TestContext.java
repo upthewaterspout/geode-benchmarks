@@ -20,6 +20,7 @@ package org.apache.geode.perftest;
 import java.io.File;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Map;
 import java.util.Set;
 
 public interface TestContext extends Serializable {
@@ -37,7 +38,8 @@ public interface TestContext extends Serializable {
   int getJvmID();
 
   /**
-   * Sets the value of the attribute
+   * Sets the value of the attribute. Attributes
+   * are local to the JVM in which they are set.
    *
    * @param attribute attribute name
    * @param value attribute value
@@ -47,11 +49,17 @@ public interface TestContext extends Serializable {
   /**
    * Gets the value of an attribute when searched by the passed key
    *
+   * Attributes are local to the JVM in which they are set
+   *
    * @param key lookup key
    * @return the attribute value
    */
   Object getAttribute(String key);
 
 
-
+  /**
+   * Get the properties the test was originally configured with in
+   * {@link TestRunners#defaultRunner(Map)}
+   */
+  Map<String, String> getTestProperties();
 }

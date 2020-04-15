@@ -17,6 +17,8 @@ package org.apache.geode.benchmark.tests;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
+import java.util.Map;
+
 import org.apache.geode.perftest.TestConfig;
 
 public class GeodeBenchmark {
@@ -37,8 +39,8 @@ public class GeodeBenchmark {
   private static final int THREADS = Runtime.getRuntime().availableProcessors() * 10;
 
 
-  public static TestConfig createConfig() {
-    TestConfig testConfig = new TestConfig();
+  public static TestConfig createConfig(Map<String, String> testProperties) {
+    TestConfig testConfig = new TestConfig(testProperties);
     testConfig.warmupSeconds(WARM_UP_TIME);
     testConfig.durationSeconds(BENCHMARK_DURATION);
     testConfig.threads(THREADS);

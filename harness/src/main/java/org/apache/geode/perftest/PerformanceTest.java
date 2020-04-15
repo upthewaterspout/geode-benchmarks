@@ -18,6 +18,7 @@
 package org.apache.geode.perftest;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.yardstickframework.BenchmarkDriver;
 
@@ -47,6 +48,6 @@ public interface PerformanceTest extends Serializable {
   /**
    * Return the configuration for the test.
    */
-  TestConfig configure();
+  TestConfig configure(Map<String, String> testProperties);
 
 }

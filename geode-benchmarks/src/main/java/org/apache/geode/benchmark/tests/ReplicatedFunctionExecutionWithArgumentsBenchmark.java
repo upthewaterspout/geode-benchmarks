@@ -16,6 +16,8 @@ package org.apache.geode.benchmark.tests;
 
 import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.CLIENT;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 import org.apache.geode.benchmark.tasks.ExecuteParameterizedFunction;
@@ -31,8 +33,8 @@ public class ReplicatedFunctionExecutionWithArgumentsBenchmark
   }
 
   @Override
-  public TestConfig configure() {
-    TestConfig config = super.configure();
+  public TestConfig configure(Map<String, String> testProperties) {
+    TestConfig config = super.configure(testProperties);
     config.threads(Runtime.getRuntime().availableProcessors() * 16);
     config.workload(new ExecuteParameterizedFunction(getKeyRange()), CLIENT);
     return config;

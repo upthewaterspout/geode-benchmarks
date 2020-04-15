@@ -45,7 +45,7 @@ public class StartServer implements Task {
   @Override
   public void run(TestContext context) throws Exception {
 
-    Properties properties = serverProperties();
+    Properties properties = serverProperties(context);
 
     String locatorString = LocatorUtil.getLocatorString(context, locatorPort);
     String statsFile = new File(context.getOutputDir(), "stats.gfs").getAbsolutePath();

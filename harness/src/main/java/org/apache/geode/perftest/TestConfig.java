@@ -43,6 +43,12 @@ public class TestConfig implements Serializable {
   private List<TestStep> before = new ArrayList<>();
   private List<TestStep> workload = new ArrayList<>();
   private List<TestStep> after = new ArrayList<>();
+  private Map<String, String> testProperties;
+
+  public TestConfig(Map<String, String> testProperties) {
+    this.testProperties = testProperties;
+
+  }
 
   /**
    * Define a role for the test.
@@ -159,6 +165,18 @@ public class TestConfig implements Serializable {
 
   public Map<String, List<String>> getJvmArgs() {
     return Collections.unmodifiableMap(jvmArgs);
+  }
+
+  public Map<String, String> getTestProperties() {
+    return testProperties;
+  }
+
+  public String getProperty(String propertyName, String defaultValue) {
+    return testProperties.getOrDefault(propertyName, defaultValue);
+  }
+
+  public String getProperty(String propertyName) {
+    return testProperties.get(propertyName);
   }
 
   public static class TestStep {

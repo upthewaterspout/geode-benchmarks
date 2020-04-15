@@ -21,6 +21,7 @@ import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.SER
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Collections;
 import java.util.Properties;
 
 import org.junit.jupiter.api.AfterEach;
@@ -50,33 +51,29 @@ class GcParametersTest {
 
   @Test
   public void withDefault() {
-    System.clearProperty(WITH_GC);
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.emptyMap());
     GcParameters.configure(testConfig);
     assertCms(testConfig);
   }
 
   @Test
   public void withCms() {
-    System.setProperty(WITH_GC, "CMS");
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.singletonMap(WITH_GC, "CMS"));
     GcParameters.configure(testConfig);
     assertCms(testConfig);
   }
 
   @Test
   public void withG1() {
-    System.setProperty(WITH_GC, "G1");
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.singletonMap(WITH_GC, "G1"));
     GcParameters.configure(testConfig);
     assertG1(testConfig);
   }
 
   @Test
   public void withZ() {
-    System.setProperty(WITH_GC, "Z");
     System.setProperty(JAVA_RUNTIME_VERSION, "11.0.4+11");
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.singletonMap(WITH_GC, "Z"));
     GcParameters.configure(testConfig);
     assertZ(testConfig);
   }
@@ -85,7 +82,7 @@ class GcParametersTest {
   public void withZinJava8() {
     System.setProperty(WITH_GC, "Z");
     System.setProperty(JAVA_RUNTIME_VERSION, "1.8.0_212-b03");
-    final TestConfig testConfig = new TestConfig();
+    final TestConfig testConfig = new TestConfig(Collections.singletonMap(WITH_GC, "Z"));
     assertThatThrownBy(() -> GcParameters.configure(testConfig))
         .isInstanceOf(IllegalArgumentException.class);
   }

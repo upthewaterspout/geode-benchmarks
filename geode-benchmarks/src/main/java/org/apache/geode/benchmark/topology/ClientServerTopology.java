@@ -18,7 +18,6 @@ import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.CLI
 import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.LOCATOR;
 import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.SERVER;
 
-import org.bouncycastle.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +51,6 @@ public class ClientServerTopology {
   static final int NUM_LOCATORS = 1;
   static final int NUM_SERVERS = 2;
   static final int NUM_CLIENTS = 1;
-  private static final String WITH_SSL_ARGUMENT = "-DwithSsl=true";
-  private static final String WITH_SECURITY_MANAGER_ARGUMENT = "-DwithSecurityManager=true";
 
   public static void configure(TestConfig testConfig) {
     testConfig.role(LOCATOR, NUM_LOCATORS);
@@ -66,29 +63,8 @@ public class ClientServerTopology {
     GcParameters.configure(testConfig);
     ProfilerParameters.configure(testConfig);
 
-    addToTestConfig(testConfig, "withSsl", WITH_SSL_ARGUMENT);
-    addToTestConfig(testConfig, "withSecurityManager", WITH_SECURITY_MANAGER_ARGUMENT);
-
     testConfig.before(new StartLocator(LOCATOR_PORT), LOCATOR);
     testConfig.before(new StartServer(LOCATOR_PORT), SERVER);
     testConfig.before(new StartClient(LOCATOR_PORT), CLIENT);
-  }
-
-  private static void addToTestConfig(TestConfig testConfig, String systemPropertyKey,
-      String jvmArgument) {
-    if (Boolean.getBoolean(systemPropertyKey)) {
-      logger.info("Configuring JVMs to run with " + jvmArgument);
-      testConfig.jvmArgs(CLIENT, jvmArgument);
-      testConfig.jvmArgs(LOCATOR, jvmArgument);
-      testConfig.jvmArgs(SERVER, jvmArgument);
-    }
-  }
-
-  private static String[] appendIfNotEmpty(String[] a, String b) {
-    if (null == b || b.length() == 0) {
-      return a;
-    }
-
-    return Arrays.append(a, b);
   }
 }

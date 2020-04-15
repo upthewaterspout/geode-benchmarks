@@ -17,6 +17,8 @@ package org.apache.geode.benchmark.tests;
 import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.CLIENT;
 import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.SERVER;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 import org.apache.geode.benchmark.LongRange;
@@ -49,8 +51,8 @@ public class ReplicatedNonIndexedQueryBenchmark implements PerformanceTest {
   }
 
   @Override
-  public TestConfig configure() {
-    TestConfig config = GeodeBenchmark.createConfig();
+  public TestConfig configure(Map<String, String> testProperties) {
+    TestConfig config = GeodeBenchmark.createConfig(testProperties);
     config.threads(Runtime.getRuntime().availableProcessors());
     ClientServerTopology.configure(config);
     config.before(new CreateReplicatedRegion(), SERVER);

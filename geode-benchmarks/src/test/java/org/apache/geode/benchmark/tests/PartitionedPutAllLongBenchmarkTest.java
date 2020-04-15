@@ -21,6 +21,7 @@ package org.apache.geode.benchmark.tests;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class PartitionedPutAllLongBenchmarkTest {
       throws Exception {
     PartitionedPutAllLongBenchmark test = new PartitionedPutAllLongBenchmark();
     test.setKeyRange(new LongRange(0, 100));
-    TestRunners.minimalRunner(folder)
+    TestRunners.minimalRunner(folder, Collections.emptyMap())
         .runTest(test);
   }
 }

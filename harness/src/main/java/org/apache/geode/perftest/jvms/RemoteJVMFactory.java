@@ -100,7 +100,7 @@ public class RemoteJVMFactory {
    * @return a {@link RemoteJVMs} object used to access the JVMs through RMI
    */
   public RemoteJVMs launch(Map<String, Integer> roles,
-      Map<String, List<String>> jvmArgs) throws Exception {
+      Map<String, List<String>> jvmArgs, Map<String, String> testProperties) throws Exception {
     int numWorkers = roles.values().stream().mapToInt(Integer::intValue).sum();
 
     Infrastructure infra = infrastructureFactory.create(numWorkers);
@@ -115,7 +115,7 @@ public class RemoteJVMFactory {
     List<JVMMapping> mapping = mapRolesToNodes(roles, nodes, jvmArgs);
 
     Controller controller =
-        controllerFactory.createController(new SharedContext(mapping), numWorkers);
+        controllerFactory.createController(new SharedContext(mapping, testProperties), numWorkers);
 
     classPathCopier.copyToNodes(infra, node -> getLibDir(mapping, node));
     File keyStore = createKeystore();

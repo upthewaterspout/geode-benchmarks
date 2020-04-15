@@ -48,7 +48,8 @@ public class SharedContextTest {
     when(node2.getAddress()).thenReturn(host2);
     JVMMapping mapping2 = new JVMMapping(node2, "role", 2, Collections.emptyList());
 
-    SharedContext context = new SharedContext(Arrays.asList(mapping1, mapping2));
+    SharedContext context = new SharedContext(Arrays.asList(mapping1, mapping2),
+        Collections.emptyMap());
 
     Set<InetAddress> hosts = context.getHostsForRole("role");
 

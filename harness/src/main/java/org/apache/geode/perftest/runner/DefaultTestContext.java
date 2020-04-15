@@ -19,10 +19,12 @@ package org.apache.geode.perftest.runner;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.geode.perftest.TestContext;
+import org.apache.geode.perftest.TestRunners;
 
 public class DefaultTestContext implements TestContext {
 
@@ -53,14 +55,28 @@ public class DefaultTestContext implements TestContext {
     return sharedContext.getHostIDsForRole(role);
   }
 
+  /**
+   * Set a JVM specific test attribute
+   */
   @Override
   public void setAttribute(String attribute, Object value) {
     attributeMap.put(attribute, value);
   }
 
+  /**
+   * Get a JVM specific test attribute
+   */
   @Override
   public Object getAttribute(String key) {
     return attributeMap.get(key);
+  }
+
+  /**
+   * Get the properties the test was originally configured with in
+   * {@link TestRunners#defaultRunner(Map)}
+   */
+  public Map<String, String> getTestProperties() {
+    return sharedContext.getTestProperties();
   }
 
   @Override

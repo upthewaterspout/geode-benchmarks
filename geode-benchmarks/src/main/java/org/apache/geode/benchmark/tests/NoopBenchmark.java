@@ -20,6 +20,8 @@ package org.apache.geode.benchmark.tests;
 
 import static org.apache.geode.benchmark.topology.ClientServerTopology.Roles.CLIENT;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 import org.apache.geode.benchmark.tasks.NoopTask;
@@ -41,8 +43,8 @@ public class NoopBenchmark implements PerformanceTest {
   public NoopBenchmark() {}
 
   @Override
-  public TestConfig configure() {
-    TestConfig config = GeodeBenchmark.createConfig();
+  public TestConfig configure(Map<String, String> testProperties) {
+    TestConfig config = GeodeBenchmark.createConfig(testProperties);
     ClientServerTopology.configure(config);
     config.workload(new NoopTask(), CLIENT);
     return config;

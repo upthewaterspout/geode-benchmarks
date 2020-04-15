@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +32,10 @@ public class TestRunnersTest {
 
   @Test
   public void defaultRunnerShouldParseHosts() {
+
     DefaultTestRunner runner =
-        (DefaultTestRunner) TestRunners.defaultRunner("localhost,localhost", null);
+        (DefaultTestRunner) TestRunners.defaultRunner(
+            Collections.singletonMap(HarnessProperties.TEST_HOSTS, "localhost,localhost"));
 
     SshInfrastructureFactory infrastructureFactory =
         (SshInfrastructureFactory) runner.getRemoteJvmFactory().getInfrastructureFactory();
@@ -43,6 +46,7 @@ public class TestRunnersTest {
   @Test
   public void defaultRunnerShouldFailWithNoHosts() {
 
-    assertThrows(IllegalStateException.class, () -> TestRunners.defaultRunner(null, null));
+    assertThrows(IllegalStateException.class,
+        () -> TestRunners.defaultRunner(Collections.emptyMap()));
   }
 }

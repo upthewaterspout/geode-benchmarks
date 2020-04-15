@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,16 +55,16 @@ public class TestRunnerJUnitTest {
     RemoteJVMFactory remoteJvmFactory = mock(RemoteJVMFactory.class);
 
     RemoteJVMs remoteJVMs = mock(RemoteJVMs.class);
-    when(remoteJvmFactory.launch(any(), any())).thenReturn(remoteJVMs);
+    when(remoteJvmFactory.launch(any(), any(), any())).thenReturn(remoteJVMs);
 
     TestRunner runner = new DefaultTestRunner(remoteJvmFactory,
-        folder);
+        folder, Collections.emptyMap());
 
     Task before = mock(Task.class);
     Task after = mock(Task.class);
 
-    PerformanceTest test = () -> {
-      TestConfig config = new TestConfig();
+    PerformanceTest test = properties -> {
+      TestConfig config = new TestConfig(properties);
       config.role("before", 1);
       config.role("workload", 1);
       config.role("after", 1);
@@ -85,15 +86,15 @@ public class TestRunnerJUnitTest {
     RemoteJVMFactory remoteJvmFactory = mock(RemoteJVMFactory.class);
 
     RemoteJVMs remoteJVMs = mock(RemoteJVMs.class);
-    when(remoteJvmFactory.launch(any(), any())).thenReturn(remoteJVMs);
+    when(remoteJvmFactory.launch(any(), any(), any())).thenReturn(remoteJVMs);
 
     TestRunner runner = new DefaultTestRunner(remoteJvmFactory,
-        folder);
+        folder, Collections.emptyMap());
 
     Task before = mock(Task.class);
 
-    PerformanceTest test = () -> {
-      TestConfig config = new TestConfig();
+    PerformanceTest test = properties -> {
+      TestConfig config = new TestConfig(properties);
       config.role("before", 1);
 
       config.before(before);

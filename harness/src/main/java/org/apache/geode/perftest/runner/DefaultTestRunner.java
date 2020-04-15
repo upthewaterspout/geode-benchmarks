@@ -53,16 +53,19 @@ public class DefaultTestRunner implements TestRunner {
 
 
   private final RemoteJVMFactory remoteJvmFactory;
+  private final Map<String, String> testProperties;
   private File outputDir;
 
-  public DefaultTestRunner(RemoteJVMFactory remoteJvmFactory, File outputDir) {
+  public DefaultTestRunner(RemoteJVMFactory remoteJvmFactory, File outputDir,
+      Map<String, String> testProperties) {
     this.remoteJvmFactory = remoteJvmFactory;
     this.outputDir = outputDir;
+    this.testProperties = testProperties;
   }
 
   @Override
   public void runTest(PerformanceTest test) throws Exception {
-    TestConfig config = test.configure();
+    TestConfig config = test.configure(testProperties);
     String testName = test.getClass().getName();
     runTest(config, testName);
   }
@@ -118,7 +121,7 @@ public class DefaultTestRunner implements TestRunner {
 
     logger.info("Lauching JVMs...");
     // launch JVMs in parallel, hook them up
-    RemoteJVMs remoteJVMs = remoteJvmFactory.launch(roles, jvmArgs);
+    RemoteJVMs remoteJVMs = remoteJvmFactory.launch(roles, jvmArgs, config.getTestProperties());
     try {
       logger.info("Starting before tasks...");
       runTasks(config.getBefore(), remoteJVMs);

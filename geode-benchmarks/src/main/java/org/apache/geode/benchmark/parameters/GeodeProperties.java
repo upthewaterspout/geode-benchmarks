@@ -36,10 +36,11 @@ import static org.apache.geode.security.SecurableCommunicationChannels.ALL;
 import java.util.Properties;
 
 import org.apache.geode.benchmark.security.ExampleAuthInit;
+import org.apache.geode.perftest.TestContext;
 
 public class GeodeProperties {
 
-  public static Properties serverProperties() {
+  public static Properties serverProperties(TestContext context) {
     Properties properties = new Properties();
 
     properties.setProperty(CONSERVE_SOCKETS, "false");
@@ -57,15 +58,15 @@ public class GeodeProperties {
     properties.setProperty(USE_CLUSTER_CONFIGURATION, "false");
     properties.setProperty(SERIALIZABLE_OBJECT_FILTER, "benchmark.geode.data.**");
 
-    return withOptions(properties);
+    return withOptions(context, properties);
   }
 
-  public static Properties locatorProperties() {
+  public static Properties locatorProperties(TestContext context) {
     // Locator properties are the same as the server properties right now
-    return withOptions(serverProperties());
+    return withOptions(context, serverProperties(context));
   }
 
-  public static Properties clientProperties() {
+  public static Properties clientProperties(TestContext context) {
     Properties properties = new Properties();
 
     properties.setProperty(ENABLE_TIME_STATISTICS, "true");
@@ -77,7 +78,7 @@ public class GeodeProperties {
     properties.setProperty("security-password", "123");
     properties.setProperty("security-client-auth-init", ExampleAuthInit.class.getName());
 
-    return withOptions(properties);
+    return withOptions(context, properties);
   }
 
   public static Properties withSecurityManager(Properties properties) {
@@ -93,25 +94,27 @@ public class GeodeProperties {
     return properties;
   }
 
-  private static boolean isSecurityManagerEnabled() {
-    return isPropertySet("withSecurityManager");
+  private static boolean isSecurityManagerEnabled(TestContext context) {
+    return isPropertySet(context, "withSecurityManager");
   }
 
-  private static boolean isSslEnabled() {
-    return isPropertySet("withSsl");
+  private static boolean isSslEnabled(TestContext context) {
+    return isPropertySet(context, "withSsl");
   }
 
-  private static boolean isPropertySet(String withSecurityManager) {
-    String withSecurityManagerArg = System.getProperty(withSecurityManager);
-    return withSecurityManagerArg != null && withSecurityManagerArg.equals("true");
+  private static boolean isPropertySet(TestContext context,
+      String propertyName) {
+    String property = context.getTestProperties().get(propertyName);
+    return property != null && property.equals("true");
   }
 
-  private static Properties withOptions(Properties properties) {
-    if (isSslEnabled()) {
+  private static Properties withOptions(TestContext context,
+      Properties properties) {
+    if (isSslEnabled(context)) {
       properties = withSsl(properties);
     }
 
-    if (isSecurityManagerEnabled()) {
+    if (isSecurityManagerEnabled(context)) {
       properties = withSecurityManager(properties);
     }
     return properties;

@@ -46,7 +46,7 @@ public class StartClient implements Task {
     InetAddress locator = context.getHostsForRole("locator").iterator().next();
 
     String statsFile = new File(context.getOutputDir(), "stats.gfs").getAbsolutePath();
-    Properties properties = clientProperties();
+    Properties properties = clientProperties(context);
 
     ClientCache clientCache = new ClientCacheFactory(properties)
         .setPdxSerializer(new ReflectionBasedAutoSerializer("benchmark.geode.data.*"))

@@ -21,12 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,23 +49,17 @@ public class TestRunnerIntegrationTest {
   void setup(@TempDirectory.TempDir Path tempDirPath) {
     this.temporaryFolder = tempDirPath;
     outputDir = temporaryFolder.toFile();
-    runner = new DefaultTestRunner(new RemoteJVMFactory(new LocalInfrastructureFactory()),
-        outputDir);
   }
 
-  private TestRunner runner;
   private File outputDir;
-  public static final String SAMPLE_BENCHMARK = "SampleBenchmark";
-
-  @BeforeEach
-  public void setup() throws IOException {
-
-  }
 
   @Test
   public void runsBeforeWorkload() throws Exception {
-    runner.runTest(() -> {
-      TestConfig testConfig = new TestConfig();
+    DefaultTestRunner runner =
+        new DefaultTestRunner(new RemoteJVMFactory(new LocalInfrastructureFactory()),
+            outputDir, Collections.emptyMap());
+    runner.runTest(properties -> {
+      TestConfig testConfig = new TestConfig(properties);
       testConfig.role("all", 1);
       testConfig.before(context -> System.out.println("hello"), "all");
       return testConfig;
@@ -73,8 +69,8 @@ public class TestRunnerIntegrationTest {
   public static class OutputDirectoryTest implements PerformanceTest {
 
     @Override
-    public TestConfig configure() {
-      TestConfig testConfig = new TestConfig();
+    public TestConfig configure(Map<String, String> testProperties) {
+      TestConfig testConfig = new TestConfig(testProperties);
       testConfig.role("all", 1);
       testConfig.workload(new EmptyBenchmark(), "all");
       return testConfig;
@@ -83,6 +79,9 @@ public class TestRunnerIntegrationTest {
 
   @Test
   public void generatesOutputDirectoryPerBenchmark() throws Exception {
+    DefaultTestRunner runner =
+        new DefaultTestRunner(new RemoteJVMFactory(new LocalInfrastructureFactory()),
+            outputDir, Collections.emptyMap());
 
     runner.runTest(new OutputDirectoryTest());
 
@@ -102,8 +101,11 @@ public class TestRunnerIntegrationTest {
 
   @Test
   public void configuresJVMOptions() throws Exception {
-    runner.runTest(() -> {
-      TestConfig testConfig = new TestConfig();
+    DefaultTestRunner runner =
+        new DefaultTestRunner(new RemoteJVMFactory(new LocalInfrastructureFactory()),
+            outputDir, Collections.emptyMap());
+    runner.runTest(properties -> {
+      TestConfig testConfig = new TestConfig(properties);
       testConfig.role("all", 1);
       testConfig.jvmArgs("all", "-Dprop1=true", "-Dprop2=5");
       testConfig.before(context -> {
@@ -111,6 +113,22 @@ public class TestRunnerIntegrationTest {
             "Expecting system property to be set in launched JVM, but it was not present.");
         assertEquals(5, Integer.getInteger("prop2").intValue(),
             "Expecting system property to be set in launched JVM, but it was not present.");
+      }, "all");
+      return testConfig;
+    });
+  }
+
+  @Test
+  public void passesTestPropertiesToTestJVMs() throws Exception {
+    DefaultTestRunner runner =
+        new DefaultTestRunner(new RemoteJVMFactory(new LocalInfrastructureFactory()),
+            outputDir, Collections.singletonMap("A", "B"));
+    runner.runTest(properties -> {
+      Assertions.assertThat(properties).containsEntry("A", "B");
+      TestConfig testConfig = new TestConfig(properties);
+      testConfig.role("all", 1);
+      testConfig.before(context -> {
+        Assertions.assertThat(context.getTestProperties()).containsEntry("A", "B");
       }, "all");
       return testConfig;
     });

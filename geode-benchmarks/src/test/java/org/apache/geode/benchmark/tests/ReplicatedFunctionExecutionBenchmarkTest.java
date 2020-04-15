@@ -16,6 +16,7 @@ package org.apache.geode.benchmark.tests;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,6 @@ public class ReplicatedFunctionExecutionBenchmarkTest {
   void benchmarkRunsSuccessfully() throws Exception {
     ReplicatedFunctionExecutionBenchmark test = new ReplicatedFunctionExecutionBenchmark();
     test.setKeyRange(new LongRange(0, 100));
-    TestRunners.minimalRunner(folder).runTest(test);
+    TestRunners.minimalRunner(folder, Collections.emptyMap()).runTest(test);
   }
 }

@@ -27,7 +27,8 @@ public class ProfilerParameters {
   private static final Logger logger = LoggerFactory.getLogger(ProfilerParameters.class);
 
   public static void configure(final TestConfig testConfig) {
-    final String profilerArgument = System.getProperty("benchmark.profiler.argument");
+    final String profilerArgument = testConfig.getProperty(
+        BenchmarkProperties.BENCHMARK_PROFILER_ARGUMENT);
     if (!isNullOrEmpty(profilerArgument)) {
       logger.info("Configuring profiler parameter. {}", profilerArgument);
       configureAll(testConfig, profilerArgument);

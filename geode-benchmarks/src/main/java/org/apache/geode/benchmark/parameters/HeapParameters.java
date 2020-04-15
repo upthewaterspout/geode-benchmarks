@@ -26,7 +26,8 @@ public class HeapParameters {
   private static final Logger logger = LoggerFactory.getLogger(HeapParameters.class);
 
   public static void configure(final TestConfig testConfig) {
-    final String heap = System.getProperty("withHeap", "8g");
+    final String heap = testConfig.getProperty(BenchmarkProperties.WITH_HEAP,
+        BenchmarkProperties.WITH_HEAP_DEFAULT);
     logger.info("Configuring heap parameters {}.", heap);
     configureAll(testConfig, "-Xmx" + heap, "-Xms" + heap);
   }

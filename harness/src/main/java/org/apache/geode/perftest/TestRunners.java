@@ -18,6 +18,8 @@
 package org.apache.geode.perftest;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 
 import org.apache.geode.perftest.infrastructure.local.LocalInfrastructureFactory;
 import org.apache.geode.perftest.infrastructure.ssh.SshInfrastructureFactory;
@@ -37,9 +39,6 @@ import org.apache.geode.perftest.runner.DefaultTestRunner;
  *
  */
 public class TestRunners {
-
-  public static final String TEST_HOSTS = "TEST_HOSTS";
-  public static final String OUTPUT_DIR = "OUTPUT_DIR";
 
   public static final String[] JVM_ARGS_SMALL_SIZE = new String[] {
       "-XX:CMSInitiatingOccupancyFraction=60",
@@ -70,41 +69,54 @@ public class TestRunners {
 
   };
 
-  public static TestRunner defaultRunner(String username, File outputDir, String... hosts) {
+  private static TestRunner defaultRunner(String username, File outputDir,
+      Map<String, String> testProperties,
+      String... hosts) {
     return new DefaultTestRunner(
         new RemoteJVMFactory(new SshInfrastructureFactory(username, hosts)),
-        outputDir);
+        outputDir, testProperties);
   }
 
   /**
-   * The default runner, which gets a list of hosts to run on from the
-   * TEST_HOSTS system property.
-   *
+   * Create a test runner that reads test properties from System.properties and calls
+   * {@link #defaultRunner(Map)}
    */
   public static TestRunner defaultRunner() {
-    String testHosts = System.getProperty(TEST_HOSTS);
-    String outputDir = System.getProperty(OUTPUT_DIR, "output");
 
-    return defaultRunner(testHosts, new File(outputDir));
+    Map<String, String> properties =
+        (Map) Collections.unmodifiableMap(System.getProperties());
+
+    return defaultRunner(properties);
   }
 
-  static TestRunner defaultRunner(String testHosts, File outputDir) {
+  /**
+   * Create a test runner with the given properties. Valid properties for the test
+   * harness itself are listed in {@link HarnessProperties}. These properties will be passed to all
+   * test JVMs and are available in {@link TestContext}
+   *
+   * At a minimum, you must configure the {@link HarnessProperties#TEST_HOSTS} property to provide
+   * a list of hosts to run the test on.
+   */
+  public static TestRunner defaultRunner(Map<String, String> properties) {
+    String testHosts = properties.get(HarnessProperties.TEST_HOSTS);
+    String outputDir = properties.getOrDefault(HarnessProperties.OUTPUT_DIR, "output");
     if (testHosts == null) {
       throw new IllegalStateException(
           "You must set the TEST_HOSTS system property to a comma separated list of hosts to run the benchmarks on.");
     }
 
     String userName = System.getProperty("user.name");
-    return defaultRunner(userName, outputDir, testHosts.split(",\\s*"));
+    return defaultRunner(userName, new File(outputDir), properties, testHosts.split(",\\s*"));
   }
 
   /**
    * A test runner that runs the test with the minimal tuning - only
    * 1 second duration on local infrastructure.
    */
-  public static TestRunner minimalRunner(final File outputDir) {
+  public static TestRunner minimalRunner(final File outputDir,
+      final Map<String, String> testProperties) {
     return new DefaultTestRunner(new RemoteJVMFactory(new LocalInfrastructureFactory()),
-        outputDir) {
+        outputDir, testProperties) {
       @Override
       public void runTest(TestConfig config, String testName) throws Exception {
         config.warmupSeconds(0);
