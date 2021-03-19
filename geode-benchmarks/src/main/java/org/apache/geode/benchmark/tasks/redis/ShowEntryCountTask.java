@@ -21,18 +21,23 @@ import static java.lang.String.valueOf;
 
 import org.apache.geode.benchmark.LongRange;
 import org.apache.geode.benchmark.tests.redis.RedisBenchmark;
+import org.apache.geode.perftest.Task;
+import org.apache.geode.perftest.TestContext;
 
-public class PrePopulateRedisHash extends AbstractPrePopulate {
+public class ShowEntryCountTask implements Task {
 
-  public PrePopulateRedisHash(
-      final RedisClientManager redisClientManager,
-      final LongRange keyRangeToPrepopulate) {
-    super(redisClientManager, keyRangeToPrepopulate);
+  private RedisClientManager redisClientManager;
+
+  public ShowEntryCountTask(
+      final RedisClientManager redisClientManager) {
+    this.redisClientManager = redisClientManager;
   }
 
   @Override
-  protected void prepopulate(final RedisClient redisClient, final long key) {
-    final String value = valueOf(key % RedisBenchmark.KEYS_PER_HASH);
-    redisClient.hset(valueOf(key / RedisBenchmark.KEYS_PER_HASH), value, value);
+  public void run(TestContext context) throws Exception {
+    RedisClient client = redisClientManager.get();
+    context.logProgress("Number of entries " + client.getEntryCount());
+
   }
+
 }

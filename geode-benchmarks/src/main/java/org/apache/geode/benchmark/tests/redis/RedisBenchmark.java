@@ -40,6 +40,7 @@ public class RedisBenchmark implements PerformanceTest {
   public static final String WITH_REDIS_CLUSTER_PROPERTY = "withRedisCluster";
 
   public static final String REDIS_SERVERS_ATTRIBUTE = "RedisBenchmark.Servers";
+  public static final int KEYS_PER_HASH = 10;
 
   public enum RedisClientImplementation {
     Jedis,

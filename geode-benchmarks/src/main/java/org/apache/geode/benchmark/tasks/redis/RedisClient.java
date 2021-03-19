@@ -18,6 +18,8 @@ package org.apache.geode.benchmark.tasks.redis;
 public interface RedisClient {
   String get(String key);
 
+  int getEntryCount();
+
   String set(String key, String value);
 
   String hget(String key, String field);

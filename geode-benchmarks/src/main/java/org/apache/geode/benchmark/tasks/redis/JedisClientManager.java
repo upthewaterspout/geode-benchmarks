@@ -44,6 +44,11 @@ public final class JedisClientManager implements RedisClientManager {
     }
 
     @Override
+    public int getEntryCount() {
+      return jedisCluster.keys("*").size();
+    }
+
+    @Override
     public String set(final String key, final String value) {
       return jedisCluster.set(key, value);
     }

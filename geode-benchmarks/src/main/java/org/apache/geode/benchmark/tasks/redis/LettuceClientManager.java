@@ -58,6 +58,11 @@ public final class LettuceClientManager implements RedisClientManager {
     }
 
     @Override
+    public int getEntryCount() {
+      return redisAdvancedClusterCommands.get().keys("*").size();
+    }
+
+    @Override
     public String hget(final String key, final String field) {
       return redisAdvancedClusterCommands.get().hget(key, field);
     }

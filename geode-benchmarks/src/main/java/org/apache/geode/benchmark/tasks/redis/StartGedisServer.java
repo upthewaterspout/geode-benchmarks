@@ -38,6 +38,7 @@ public class StartGedisServer extends StartServer {
   @Override
   protected void configureCache(final InternalCache cache, final TestContext context) {
     super.configureCache(cache, context);
+    cache.getResourceManager().setEvictionHeapPercentage(75.0f);
 
     GeodeRedisService geodeRedisService = cache.getService(GeodeRedisService.class);
     geodeRedisService.setEnableUnsupported(true);

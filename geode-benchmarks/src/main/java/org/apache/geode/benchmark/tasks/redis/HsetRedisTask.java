@@ -18,7 +18,10 @@
 package org.apache.geode.benchmark.tasks.redis;
 
 
+import static org.apache.geode.benchmark.tests.redis.RedisBenchmark.KEYS_PER_HASH;
+
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -30,6 +33,16 @@ import org.apache.geode.benchmark.LongRange;
 
 public class HsetRedisTask extends BenchmarkDriverAdapter implements Serializable {
   private static final Logger logger = LoggerFactory.getLogger(HsetRedisTask.class);
+
+  private static String BIG_VALUE;
+
+  {
+    byte[] bytes = new byte[1024 * 1024];
+    Arrays.fill(bytes, (byte) 'a');
+    BIG_VALUE = new String(bytes);
+  };
+
+
 
   private final RedisClientManager redisClientManager;
   private final LongRange keyRange;
@@ -54,10 +67,9 @@ public class HsetRedisTask extends BenchmarkDriverAdapter implements Serializabl
   @Override
   public boolean test(final Map<Object, Object> ctx) throws Exception {
     final long k = keyRange.random();
-    final String key = keyCache.valueOf(k / 1000);
-    final String field = keyCache.valueOf(k % 1000);
-    final String value = keyCache.valueOf(k);
-    redisClient.hset(key, field, value);
+    final String key = keyCache.valueOf(k / KEYS_PER_HASH);
+    final String field = keyCache.valueOf(k % KEYS_PER_HASH);
+    redisClient.hset(key, field, BIG_VALUE);
     return true;
   }
 
