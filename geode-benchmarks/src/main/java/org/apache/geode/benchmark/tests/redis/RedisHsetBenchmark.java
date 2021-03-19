@@ -60,10 +60,10 @@ public class RedisHsetBenchmark extends RedisBenchmark {
     //Num Entries - keyRange/KEYS_PER_HASH = 10_000
     //That should give us 100 GB of data. Our nodes only have 60 GB, so we should get eviction.
     before(config, new PrePopulateRedisHash(redisClientManager, keyRange), CLIENT);
-    after(config, new ShowEntryCountTask(redisClientManager), CLIENT);
+    after(config, new ShowEntryCountTask(redisClientManager, keyRange), CLIENT);
     workload(config, new HsetRedisTask(redisClientManager, keyRange),
         CLIENT);
-    after(config, new ShowEntryCountTask(redisClientManager), CLIENT);
+    after(config, new ShowEntryCountTask(redisClientManager, keyRange), CLIENT);
     return config;
 
   }

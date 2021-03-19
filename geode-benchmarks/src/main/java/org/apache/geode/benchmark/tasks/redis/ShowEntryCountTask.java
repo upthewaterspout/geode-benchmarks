@@ -27,16 +27,29 @@ import org.apache.geode.perftest.TestContext;
 public class ShowEntryCountTask implements Task {
 
   private RedisClientManager redisClientManager;
+  private LongRange keyRange;
 
   public ShowEntryCountTask(
-      final RedisClientManager redisClientManager) {
+      final RedisClientManager redisClientManager, LongRange keyRange) {
     this.redisClientManager = redisClientManager;
+    this.keyRange = keyRange;
   }
 
   @Override
   public void run(TestContext context) throws Exception {
     RedisClient client = redisClientManager.get();
-    context.logProgress("Number of entries " + client.getEntryCount());
+
+    //TODO - there has got to be better way than checking every key!!
+    final String value = valueOf(0);
+    final long numKeys = keyRange.getMax() / RedisBenchmark.KEYS_PER_HASH;
+    long hits = 0;
+    for(int i = 0; i < numKeys; i++) {
+      String gotValue = client.hget(valueOf(i), value);
+      if(gotValue.equals(value)) {
+        hits++;
+      }
+    }
+    context.logProgress(String.format("Number of entries %d out of %d", hits, numKeys));
 
   }
 

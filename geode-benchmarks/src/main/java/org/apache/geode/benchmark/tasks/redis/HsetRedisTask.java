@@ -30,19 +30,10 @@ import org.yardstickframework.BenchmarkConfiguration;
 import org.yardstickframework.BenchmarkDriverAdapter;
 
 import org.apache.geode.benchmark.LongRange;
+import org.apache.geode.benchmark.tests.redis.RedisBenchmark;
 
 public class HsetRedisTask extends BenchmarkDriverAdapter implements Serializable {
   private static final Logger logger = LoggerFactory.getLogger(HsetRedisTask.class);
-
-  private static String BIG_VALUE;
-
-  {
-    byte[] bytes = new byte[1024 * 1024];
-    Arrays.fill(bytes, (byte) 'a');
-    BIG_VALUE = new String(bytes);
-  };
-
-
 
   private final RedisClientManager redisClientManager;
   private final LongRange keyRange;
@@ -69,7 +60,7 @@ public class HsetRedisTask extends BenchmarkDriverAdapter implements Serializabl
     final long k = keyRange.random();
     final String key = keyCache.valueOf(k / KEYS_PER_HASH);
     final String field = keyCache.valueOf(k % KEYS_PER_HASH);
-    redisClient.hset(key, field, BIG_VALUE);
+    redisClient.hset(key, field, RedisBenchmark.BIG_VALUE);
     return true;
   }
 
