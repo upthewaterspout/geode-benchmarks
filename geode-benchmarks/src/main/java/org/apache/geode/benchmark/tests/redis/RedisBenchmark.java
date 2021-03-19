@@ -43,15 +43,13 @@ public class RedisBenchmark implements PerformanceTest {
 
   public static final String REDIS_SERVERS_ATTRIBUTE = "RedisBenchmark.Servers";
   public static final int KEYS_PER_HASH = 10;
-  public static String BIG_VALUE;
+  public static final String BIG_VALUE = bigString();
 
-  {
+  public static String bigString() {
     byte[] bytes = new byte[1024 * 1024];
     Arrays.fill(bytes, (byte) 'a');
-    RedisBenchmark.BIG_VALUE = new String(bytes);
-  };
-
-
+    return new String(bytes);
+  }
 
   public enum RedisClientImplementation {
     Jedis,
