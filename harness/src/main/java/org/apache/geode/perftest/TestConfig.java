@@ -67,6 +67,13 @@ public class TestConfig implements Serializable {
   }
 
   /**
+   * Add an after task to the test to run before other after tasks
+   */
+  public void afterHead(Task task, String... roles) {
+    after.add(0, new TestStep(task, roles));
+  }
+
+  /**
    * Add an after task to the test. After tasks are run in parallel on all
    * nodes that have the given roles
    */

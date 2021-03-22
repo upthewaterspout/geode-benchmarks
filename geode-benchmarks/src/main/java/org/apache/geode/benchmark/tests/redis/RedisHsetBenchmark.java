@@ -30,6 +30,7 @@ import org.apache.geode.benchmark.LongRange;
 import org.apache.geode.benchmark.tasks.redis.HsetRedisTask;
 import org.apache.geode.benchmark.tasks.redis.PrePopulateRedisHash;
 import org.apache.geode.benchmark.tasks.redis.ShowEntryCountTask;
+import org.apache.geode.benchmark.tasks.redis.StopRedisClient;
 import org.apache.geode.perftest.TestConfig;
 import org.apache.geode.perftest.TestRunners;
 
@@ -60,10 +61,10 @@ public class RedisHsetBenchmark extends RedisBenchmark {
     //Num Entries - keyRange/KEYS_PER_HASH = 10_000
     //That should give us 100 GB of data. Our nodes only have 60 GB, so we should get eviction.
     before(config, new PrePopulateRedisHash(redisClientManager, keyRange), CLIENT);
-    after(config, new ShowEntryCountTask(redisClientManager, keyRange), CLIENT);
+    before(config, new ShowEntryCountTask(redisClientManager, keyRange), CLIENT);
     workload(config, new HsetRedisTask(redisClientManager, keyRange),
         CLIENT);
-    after(config, new ShowEntryCountTask(redisClientManager, keyRange), CLIENT);
+    config.afterHead(new ShowEntryCountTask(redisClientManager, keyRange), CLIENT.name());
     return config;
 
   }
