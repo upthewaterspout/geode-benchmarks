@@ -45,7 +45,7 @@ public class ShowEntryCountTask implements Task {
     long hits = 0;
     for(int i = 0; i < numKeys; i++) {
       String gotValue = client.hget(valueOf(i), value);
-      if(gotValue.equals(value)) {
+      if(gotValue != null && gotValue.equals(value)) {
         hits++;
       }
     }
