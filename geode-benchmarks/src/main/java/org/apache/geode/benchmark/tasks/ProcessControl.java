@@ -68,6 +68,7 @@ public class ProcessControl {
         if(System.nanoTime() - start > RETRY_TIMEOUT.toNanos()) {
           throw new RuntimeException(msg);
         }
+        Thread.sleep(1000);
         continue;
       }
       break;
