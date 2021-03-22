@@ -27,4 +27,6 @@ public interface RedisClient {
   boolean hset(String key, String field, String value);
 
   void flushdb();
+
+  Boolean hexists(String key, String value);
 }

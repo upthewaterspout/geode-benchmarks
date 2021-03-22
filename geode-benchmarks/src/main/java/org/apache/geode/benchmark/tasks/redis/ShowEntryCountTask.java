@@ -44,8 +44,8 @@ public class ShowEntryCountTask implements Task {
     final long numKeys = keyRange.getMax() / RedisBenchmark.KEYS_PER_HASH;
     long hits = 0;
     for(int i = 0; i < numKeys; i++) {
-      String gotValue = client.hget(valueOf(i), value);
-      if(gotValue != null && gotValue.equals(value)) {
+      Boolean gotValue = client.hexists(valueOf(i), value);
+      if(gotValue != null && gotValue) {
         hits++;
       }
     }

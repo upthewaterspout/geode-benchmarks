@@ -73,6 +73,11 @@ public final class LettuceClientManager implements RedisClientManager {
     }
 
     @Override
+    public Boolean hexists(String key, String value) {
+      return redisAdvancedClusterCommands.get().hexists(key, value);
+    }
+
+    @Override
     public void flushdb() {
       redisAdvancedClusterCommands.get().flushdb();
     }

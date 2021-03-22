@@ -64,6 +64,11 @@ public final class JedisClientManager implements RedisClientManager {
     }
 
     @Override
+    public Boolean hexists(String key, String value) {
+      return jedisCluster.hexists(key, value);
+    }
+
+    @Override
     public void flushdb() {
       Set<String> seen = new HashSet<>();
       for (int i = 0; i < MAX_SLOTS; ++i) {
