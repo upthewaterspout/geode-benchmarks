@@ -54,8 +54,8 @@ public class HsetRedisTask extends BenchmarkDriverAdapter implements Serializabl
   @Override
   public boolean test(final Map<Object, Object> ctx) throws Exception {
     final long k = keyRange.random();
-    final String key = keyCache.valueOf(k / 1000);
-    final String field = keyCache.valueOf(k % 1000);
+    final String key = keyCache.valueOf(k / 10);
+    final String field = keyCache.valueOf(k % 10);
     final String value = keyCache.valueOf(k);
     redisClient.hset(key, field, value);
     return true;

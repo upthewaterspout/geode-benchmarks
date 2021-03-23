@@ -31,7 +31,7 @@ public class PrePopulateRedisHash extends AbstractPrePopulate {
 
   @Override
   protected void prepopulate(final RedisClient redisClient, final long key) {
-    final String value = valueOf(key % 1000);
-    redisClient.hset(valueOf(key / 1000), value, value);
+    final String value = valueOf(key % 10);
+    redisClient.hset(valueOf(key / 10), value, value);
   }
 }
