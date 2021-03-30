@@ -42,12 +42,12 @@ public class RedisBenchmark implements PerformanceTest {
   public static final String WITH_REDIS_CLUSTER_PROPERTY = "withRedisCluster";
 
   public static final String REDIS_SERVERS_ATTRIBUTE = "RedisBenchmark.Servers";
-  public static String VALUE;
+  public static final String VALUE = oneKString();
 
-  {
+  private static final String oneKString() {
     char[] data = new char[1024];
-    Arrays.fill(data,  'a');
-    RedisBenchmark.VALUE = new String(data);
+    Arrays.fill(data, 'a');
+    return new String(data);
   }
 
   public enum RedisClientImplementation {
