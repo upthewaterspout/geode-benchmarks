@@ -22,6 +22,8 @@ import static org.apache.geode.benchmark.tests.redis.RedisBenchmark.RedisClientI
 import static org.apache.geode.benchmark.tests.redis.RedisBenchmark.RedisClusterImplementation.Geode;
 import static org.apache.geode.benchmark.topology.Roles.CLIENT;
 
+import java.util.Arrays;
+
 import org.apache.geode.benchmark.tasks.redis.JedisClientManager;
 import org.apache.geode.benchmark.tasks.redis.LettuceClientManager;
 import org.apache.geode.benchmark.tasks.redis.RedisClientManager;
@@ -40,6 +42,13 @@ public class RedisBenchmark implements PerformanceTest {
   public static final String WITH_REDIS_CLUSTER_PROPERTY = "withRedisCluster";
 
   public static final String REDIS_SERVERS_ATTRIBUTE = "RedisBenchmark.Servers";
+  public static String VALUE;
+
+  {
+    char[] data = new char[1024];
+    Arrays.fill(data,  'a');
+    RedisBenchmark.VALUE = new String(data);
+  }
 
   public enum RedisClientImplementation {
     Jedis,

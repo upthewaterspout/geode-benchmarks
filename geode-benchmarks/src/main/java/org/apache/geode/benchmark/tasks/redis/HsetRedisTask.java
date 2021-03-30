@@ -19,6 +19,7 @@ package org.apache.geode.benchmark.tasks.redis;
 
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import org.yardstickframework.BenchmarkConfiguration;
 import org.yardstickframework.BenchmarkDriverAdapter;
 
 import org.apache.geode.benchmark.LongRange;
+import org.apache.geode.benchmark.tests.redis.RedisBenchmark;
 
 public class HsetRedisTask extends BenchmarkDriverAdapter implements Serializable {
   private static final Logger logger = LoggerFactory.getLogger(HsetRedisTask.class);
@@ -56,8 +58,7 @@ public class HsetRedisTask extends BenchmarkDriverAdapter implements Serializabl
     final long k = keyRange.random();
     final String key = keyCache.valueOf(k / 1000);
     final String field = keyCache.valueOf(k % 1000);
-    final String value = keyCache.valueOf(k);
-    redisClient.hset(key, field, value);
+    redisClient.hset(key, field, RedisBenchmark.VALUE);
     return true;
   }
 

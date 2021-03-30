@@ -20,6 +20,7 @@ package org.apache.geode.benchmark.tasks.redis;
 import static java.lang.String.valueOf;
 
 import org.apache.geode.benchmark.LongRange;
+import org.apache.geode.benchmark.tests.redis.RedisBenchmark;
 
 public class PrePopulateRedisHash extends AbstractPrePopulate {
 
@@ -32,6 +33,6 @@ public class PrePopulateRedisHash extends AbstractPrePopulate {
   @Override
   protected void prepopulate(final RedisClient redisClient, final long key) {
     final String value = valueOf(key % 1000);
-    redisClient.hset(valueOf(key / 1000), value, value);
+    redisClient.hset(valueOf(key / 1000), value, RedisBenchmark.VALUE);
   }
 }
